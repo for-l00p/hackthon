@@ -486,7 +486,7 @@ browseraction.createEventDiv_ = function(event) {
   //
   var eventDiv =
       /** @type {jQuery} */ (eventRenderer.addClass('event')
-      .css('height', (32 + end.diff(start, 'minute')) + 'px')
+      .css('height', (32 + end.diff(start, 'minute') * 1.5) + 'px')
       .attr({'data-url': event.gcal_url}));
 
   if (!start) {  // Some events detected via microformats are malformed.
