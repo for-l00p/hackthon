@@ -329,47 +329,47 @@ function showToast(parent, summary, linkUrl) {
     $('.fab').fadeIn();
   }, browseraction.TOAST_FADE_OUT_DURATION_MS);
 }
-/* CODE TO REMOVE */
-/** @private */
-// browseraction.createQuickAddEvent_ = function(text, calendarId) {
-//   var quickAddUrl =
-//       browseraction.QUICK_ADD_API_URL_.replace('{calendarId}', encodeURIComponent(calendarId)) +
-//       '?text=' + encodeURIComponent(text);
-//   chrome.identity.getAuthToken({'interactive': false}, function(authToken) {
-//     if (chrome.runtime.lastError || !authToken) {
-//       chrome.extension.getBackgroundPage().background.log(
-//           'getAuthToken', chrome.runtime.lastError.message);
-//       return;
-//     }
-//     _gaq.push(['_trackEvent', 'Quick Add', 'Add']);
 
-//     browseraction.startSpinner();
-//     $.ajax(quickAddUrl, {
-//       type: 'POST',
-//       headers: {'Authorization': 'Bearer ' + authToken},
-//       success: function(response) {
-//         showToast($('section'), response.summary, response.htmlLink);
-//         browseraction.stopSpinner();
-//         chrome.extension.sendMessage({method: 'events.feed.fetch'});
-//       },
-//       error: function(response) {
-//         browseraction.stopSpinner();
-//         $('#info_bar').text(chrome.i18n.getMessage('error_saving_new_event')).slideDown();
-//         window.setTimeout(function() {
-//           $('#info_bar').slideUp();
-//         }, constants.INFO_BAR_DISMISS_TIMEOUT_MS);
-//         _gaq.push(['_trackEvent', 'Quick Add', 'Error', response.statusText]);
-//         chrome.extension.getBackgroundPage().background.log(
-//             'Error adding Quick Add event', response.statusText);
-//         if (response.status === 401) {
-//           chrome.identity.removeCachedAuthToken({'token': authToken}, function() {});
-//         }
-//       }
-//     });
-//     $('#quick-add').slideUp(200);
-//     $('#show_quick_add').toggleClass('rotated');
-//   });
-// };
+/** @private */
+browseraction.createQuickAddEvent_ = function(text, calendarId) {
+  var quickAddUrl =
+      browseraction.QUICK_ADD_API_URL_.replace('{calendarId}', encodeURIComponent(calendarId)) +
+      '?text=' + encodeURIComponent(text);
+  chrome.identity.getAuthToken({'interactive': false}, function(authToken) {
+    if (chrome.runtime.lastError || !authToken) {
+      chrome.extension.getBackgroundPage().background.log(
+          'getAuthToken', chrome.runtime.lastError.message);
+      return;
+    }
+    _gaq.push(['_trackEvent', 'Quick Add', 'Add']);
+
+    browseraction.startSpinner();
+    $.ajax(quickAddUrl, {
+      type: 'POST',
+      headers: {'Authorization': 'Bearer ' + authToken},
+      success: function(response) {
+        showToast($('section'), response.summary, response.htmlLink);
+        browseraction.stopSpinner();
+        chrome.extension.sendMessage({method: 'events.feed.fetch'});
+      },
+      error: function(response) {
+        browseraction.stopSpinner();
+        $('#info_bar').text(chrome.i18n.getMessage('error_saving_new_event')).slideDown();
+        window.setTimeout(function() {
+          $('#info_bar').slideUp();
+        }, constants.INFO_BAR_DISMISS_TIMEOUT_MS);
+        _gaq.push(['_trackEvent', 'Quick Add', 'Error', response.statusText]);
+        chrome.extension.getBackgroundPage().background.log(
+            'Error adding Quick Add event', response.statusText);
+        if (response.status === 401) {
+          chrome.identity.removeCachedAuthToken({'token': authToken}, function() {});
+        }
+      }
+    });
+    $('#quick-add').slideUp(200);
+    $('#show_quick_add').toggleClass('rotated');
+  });
+};
 
 
 /**
@@ -487,7 +487,7 @@ browseraction.createEventDiv_ = function(event) {
   //
   var eventDiv =
       /** @type {jQuery} */ ($('<div>').addClass('event')
-      .css('height', (32 + end.diff(start, 'minute') * 1.2) + 'px')
+      .css('height', (27 + end.diff(start, 'minute') * 2) + 'px')
       .attr({'data-url': event.gcal_url}));
 
   if (!start) {  // Some events detected via microformats are malformed.
