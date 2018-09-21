@@ -222,10 +222,12 @@ browseraction.toggleQuickAddBoxVisibility_ = function(shouldShow) {
 
   if (shouldShow) {
     $('#show_quick_add').addClass('rotated');
+    $('.fab').addClass('flop').removeClass('flip');
     $('#quick-add').slideDown(200);
     $('#quick-add-event-title').focus();
   } else {
     $('#show_quick_add').removeClass('rotated');
+    $('.fab').addClass('flip').removeClass('flop');
     $('#quick-add').slideUp(200);
     $('#quick-add-event-title').blur();
   }
@@ -482,11 +484,10 @@ browseraction.createEventDiv_ = function(event) {
   var end = utils.fromIso8601(event.end);
   var now = moment().valueOf();
 
-  let eventRenderer = $('<div>');
   //
   var eventDiv =
-      /** @type {jQuery} */ (eventRenderer.addClass('event')
-      .css('height', (32 + end.diff(start, 'minute') * 1.5) + 'px')
+      /** @type {jQuery} */ ($('<div>').addClass('event')
+      .css('height', (32 + end.diff(start, 'minute') * 1.2) + 'px')
       .attr({'data-url': event.gcal_url}));
 
   if (!start) {  // Some events detected via microformats are malformed.
@@ -547,7 +548,17 @@ browseraction.createEventDiv_ = function(event) {
   }
   startTimeDiv.appendTo(eventDiv);
 
-  var eventDetails = $('<div>').addClass('event-details').appendTo(eventDiv);
+  var eventDetails = $('<div>').addClass('event-details');
+  
+  let isCurrentEvent = (now - start.valueOf() > 0);
+  if (isCurrentEvent) {
+    let css = {};
+    css["background-color"] = "#ec407a";
+    // let elapsePerc = (now - start.valueOf())/ (end.valueOf() - start.valueOf());
+    // css["height"] = elapsePerc * $(".event").css('height') + "px";
+    eventDetails.css(css);
+  }
+  eventDetails.appendTo(eventDiv);
 
   if (event.hangout_url) {
     $('<a>')
@@ -569,6 +580,7 @@ browseraction.createEventDiv_ = function(event) {
   }
 
   var eventTitle = $('<div>').addClass('event-title').text(event.title);
+  if (isCurrentEvent) eventTitle.css({"font-weight": 500, "color": "white"});
   if (event.responseStatus == constants.EVENT_STATUS_DECLINED) {
     eventTitle.addClass('declined');
   }
